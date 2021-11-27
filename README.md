@@ -5,11 +5,16 @@ Steganography is a technique to hide an image inside another.
 
 If we mixing  
 
+
 ![image1](sample/sample1.jpg)
 
-and 
+(cover image)
+
+**( + )** 
 
 ![image2](sample/sample2.jpeg)
+
+(image to merge)
 
 It's give us 
 
