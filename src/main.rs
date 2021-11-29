@@ -30,11 +30,17 @@ fn main() {
            .multiple(true)
            .takes_value(true)
            .help("outut files to be encrypted or file to be decrypted. input=[filename] or input=[filename1| filename2]"))
+        .arg(Arg::with_name("try_crop")
+           .short("c")
+           .long("try-crop")
+           .default_value("true")
+           .takes_value(true)
+           .help("Will try to crop the second image. try-crop=[false | true]"))
       .get_matches();
 
     let inputs: Vec<&str> = matches.values_of("input").unwrap().collect();
     let outputs: Vec<&str> = matches.values_of("output").unwrap().collect();
-
+    
     match  matches.value_of("action").unwrap() as &str {
         "encrypt" => {
 
@@ -46,7 +52,11 @@ fn main() {
         },
         "decrypt" => {
             let encrypted_image = image::open(inputs[0]).expect("failed to open the input image file");
-            let (img_original, img_hidden) = Steganography::decrypt(encrypted_image, true);
+            let should_crop = match matches.value_of("try_crop").unwrap().parse::<bool>() {
+                Ok(should_crop)  => should_crop,
+                Err(_e) => return println!("Try-crop option only accept 'true' | 'false' as value"),
+            };
+            let (img_original, img_hidden) = Steganography::decrypt(encrypted_image, should_crop);
             img_original.save(outputs[0]).ok().expect("Saving the first image failed");
             img_hidden.save(outputs[1]).ok().expect("Saving the second image failed");
         },
